@@ -1,96 +1,161 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace _4J_LSC_CarolinaLondoño_04
+namespace POO_Figuras
 {
-    abstract class figurageometrica{
+    abstract class FiguraGeometrica
+    {
         public abstract string Description();
-        public abstract double area();
+        public abstract double Area();
     }
 
-    class Cuadrilatero : figurageometrica {
-        private double basecuadrilatero;
+    class Cuadrilatero : FiguraGeometrica
+    {
+        private double baseCuadrilatero;
         private double altura;
 
-        public Cuadrilatero(double basecuadrilatero, double altura){
-            this.basecuadrilatero = basecuadrilatero;
+        public Cuadrilatero(double baseCuadrilatero, double altura)
+        {
+            this.baseCuadrilatero = baseCuadrilatero;
             this.altura = altura;
         }
         public override string Description()
-        {   
-            if (basecuadrilatero == altura)
-            {
-                return "Figura geométrica cuadrado";
-            }
-            else
-                return "Figura geométrica cuadrilatero";
-            //throw new NotImplementedException();
+        {
+            return (baseCuadrilatero == altura) ? "Figura geométrica: Cuadrado" : "Figura geométrica: Rectángulo";
         }
-        public override double area() {
-            return basecuadrilatero*altura; 
+        public override double Area()
+        {
+            return baseCuadrilatero * altura;
         }
     }
 
-    class triangulo : figurageometrica
+    class Triangulo : FiguraGeometrica
     {
         private double baseTriangulo;
         private double altura;
 
-        public triangulo(double baseTriangulo, double altura)
+        public Triangulo(double baseTriangulo, double altura)
         {
             this.baseTriangulo = baseTriangulo;
             this.altura = altura;
         }
         public override string Description()
         {
-            return "Figura geométrica triangulo";
-            //throw new NotImplementedException();
+            return "Figura geométrica: Triángulo";
         }
-        public override double area()
+        public override double Area()
         {
-            return (baseTriangulo * altura)/2;
+            return (baseTriangulo * altura) / 2;
         }
     }
-    class circulo : figurageometrica {
+
+    class Circulo : FiguraGeometrica
+    {
         private double radio;
-        public circulo(double radio) { 
+        public Circulo(double radio)
+        {
             this.radio = radio;
         }
-
-        public override string Description() {
-            return "Figura geométrica círculo";
+        public override string Description()
+        {
+            return "Figura geométrica: Círculo";
         }
-        //Override es la palabra clave para la relación con la clase abstract(principal)
-        public override double area(){
-            //return(radio * radio) * Math.PI;
+        public override double Area()
+        {
             return Math.PI * Math.Pow(radio, 2);
         }
     }
+
     internal class Program
     {
+        static double PedirNumero(string mensaje)
+        {
+            double valor;
+            while (true)
+            {
+                Console.Write(mensaje);
+                if (double.TryParse(Console.ReadLine(), out valor) && valor > 0)
+                {
+                    return valor;
+                }
+                Console.WriteLine("Error: Ingrese un número válido mayor que 0.");
+            }
+        }
+
+        static string ElegirUnidad()
+        {
+            string[] unidades = { "cm", "m", "in" };
+            Console.WriteLine("\nSeleccione la unidad de medida:");
+            for (int i = 0; i < unidades.Length; i++)
+            {
+                Console.WriteLine($"{i + 1}. {unidades[i]}");
+            }
+
+            while (true)
+            {
+                Console.Write("Opción: ");
+                int opcion;
+                if (int.TryParse(Console.ReadLine(), out opcion) && opcion >= 1 && opcion <= unidades.Length)
+                {
+                    return unidades[opcion - 1];
+                }
+                Console.WriteLine("Error: Opción no válida.");
+            }
+        }
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Ingresa una opción: ");
-            int opcion = int.Parse(Console.ReadLine()); 
-
-            switch (opcion)
+            while (true)
             {
-                case 1:
-                    Console.WriteLine(" === Información del cuadrilatero ==== ");
-                    Console.WriteLine("Ingresa la base: ");
-                    double base1 = double.Parse(Console.ReadLine());
-                    Console.WriteLine("Ingrese la altura: ");
-                    double altura1 = double.Parse(Console.ReadLine());
+                Console.WriteLine("\nSeleccione una figura geométrica");
+                Console.WriteLine("1. Cuadrilátero");
+                Console.WriteLine("2. Triángulo");
+                Console.WriteLine("3. Círculo");
+                Console.WriteLine("4. Salir");
 
-                    Cuadrilatero cuadrilatero = new Cuadrilatero(base1, altura1);
+                Console.Write("Ingrese una opción: ");
+                int opcion;
+                if (!int.TryParse(Console.ReadLine(), out opcion))
+                {
+                    Console.WriteLine("Error: Ingrese un número entero.");
+                    continue;
+                }
 
+                if (opcion == 4)
+                {
+                    Console.WriteLine("Gracias por usar el programa.");
                     break;
+                }
+
+                string unidad = ElegirUnidad();
+                FiguraGeometrica figura = null;
+
+                switch (opcion)
+                {
+                    case 1:
+                        double base1 = PedirNumero($"Ingrese la base ({unidad}): ");
+                        double altura1 = PedirNumero($"Ingrese la altura ({unidad}): ");
+                        figura = new Cuadrilatero(base1, altura1);
+                        break;
+
+                    case 2:
+                        double base2 = PedirNumero($"Ingrese la base ({unidad}): ");
+                        double altura2 = PedirNumero($"Ingrese la altura ({unidad}): ");
+                        figura = new Triangulo(base2, altura2);
+                        break;
+
+                    case 3:
+                        double radio = PedirNumero($"Ingrese el radio ({unidad}): ");
+                        figura = new Circulo(radio);
+                        break;
+
+                    default:
+                        Console.WriteLine("Error: Opción no válida.");
+                        continue;
+                }
+
+                Console.WriteLine($"\nHas seleccionado: {figura.Description()}");
+                Console.WriteLine($"El área es: {figura.Area():F2} {unidad}²");
             }
-                
-            
         }
     }
 }
